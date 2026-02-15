@@ -22,7 +22,7 @@ jobs:
       run: |
         docker run --rm -v ${{ github.workspace }}:/project -w /project/vehicle/OVMS.V3 \
           espressif/idf:v3.3.6 \
-          bash -c "make defconfig && make -j4"
+          bash -c "cp support/sdkconfig.default.hw31 sdkconfig && make -j4"
         
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v4
