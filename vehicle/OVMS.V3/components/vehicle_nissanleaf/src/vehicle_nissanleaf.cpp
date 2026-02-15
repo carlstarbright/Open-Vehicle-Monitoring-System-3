@@ -569,8 +569,8 @@ void OvmsVehicleNissanLeaf::shell_obd_request(int verbosity, OvmsWriter* writer,
     // validate request:
     uint8_t mode = (req <= 0xffff) ? ((req & 0xff00) >> 8) : ((req & 0xff0000) >> 16);
     if (mode != 0x01 && mode != 0x02 && mode != 0x09 &&
-        mode != 0x10 && mode != 0x1A && mode != 0x21 && mode != 0x22) {
-      writer->puts("ERROR: mode must be one of: 01, 02, 09, 10, 1A, 21 or 22");
+        mode != 0x10 && mode != 0x14 && mode != 0x19 && mode != 0x1A && mode != 0x21 && mode != 0x22) {
+      writer->puts("ERROR: mode must be one of: 01, 02, 09, 10, 14, 19, 1A, 21 or 22");
       return;
     } else if (req > 0xffffff) {
       writer->puts("ERROR: PID must be 8 or 16 bit");
