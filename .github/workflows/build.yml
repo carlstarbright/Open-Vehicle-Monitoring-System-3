@@ -18,11 +18,25 @@ jobs:
         submodules: recursive
         fetch-depth: 0
 
-    - name: Build in Docker
+    - name: Install dependencies
       run: |
-        docker run --rm -v ${{ github.workspace }}:/project -w /project/vehicle/OVMS.V3 \
-          espressif/idf:v3.3.6 \
-          bash -c "cp support/sdkconfig.default.hw31 sdkconfig && make -j4"
+        sudo apt-get update
+        sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools \
+          python3-venv libncurses-dev libffi-dev libssl-dev
+
+    - name: Setup OVMS ESP-IDF (their fork)
+      run: |
+        cd ~
+        git clone -b release/v3.3 --recursive https://github.com/openvehicles/esp-idf.git
+        cd esp-idf
+        ./install.sh esp32
+
+    - name: Build firmware
+      run: |
+        source ~/esp-idf/export.sh
+        cd vehicle/OVMS.V3
+        cp support/sdkconfig.default.hw31 sdkconfig
+        make -j$(nproc)
         
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v4
