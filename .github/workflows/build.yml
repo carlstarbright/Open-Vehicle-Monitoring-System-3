@@ -36,6 +36,7 @@ jobs:
         source ~/esp-idf/export.sh
         cd vehicle/OVMS.V3
         cp support/sdkconfig.default.hw31 sdkconfig
+        make olddefconfig
         make -j$(nproc)
         
     - name: Upload firmware artifacts
