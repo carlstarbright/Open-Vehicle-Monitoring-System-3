@@ -16,28 +16,13 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
+        fetch-depth: 0
 
-    - name: Install dependencies
+    - name: Build in Docker
       run: |
-        sudo apt-get update
-        sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools \
-          cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0 \
-          python3-venv libncurses-dev
-
-    - name: Setup ESP-IDF v3.3.4
-      run: |
-        mkdir -p ~/esp
-        cd ~/esp
-        git clone -b v3.3.4 --recursive https://github.com/espressif/esp-idf.git
-        cd esp-idf
-        ./install.sh esp32
-
-    - name: Build firmware
-      run: |
-        source ~/esp/esp-idf/export.sh
-        cd vehicle/OVMS.V3
-        make defconfig
-        make -j$(nproc)
+        docker run --rm -v ${{ github.workspace }}:/project -w /project/vehicle/OVMS.V3 \
+          espressif/idf:v3.3.6 \
+          bash -c "make defconfig && make -j4"
         
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v4
