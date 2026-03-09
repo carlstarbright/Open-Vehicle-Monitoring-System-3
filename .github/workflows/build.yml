@@ -30,6 +30,10 @@ jobs:
         git clone -b release/v3.3 --recursive https://github.com/openvehicles/esp-idf.git
         cd esp-idf
         ./install.sh esp32
+        # Modern pip (>=23) omits setuptools from new venvs, but ESP-IDF v3.3's
+        # export.sh calls idf_tools.py which does `import pkg_resources` (from
+        # setuptools). Install it explicitly into the venv install.sh just created.
+        find ~/.espressif/python_env -name pip -type f -exec {} install setuptools \;
 
     - name: Build firmware
       run: |
