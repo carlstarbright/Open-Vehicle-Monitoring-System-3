@@ -22,7 +22,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools \
-          python3-venv libncurses-dev libffi-dev libssl-dev
+          python3-venv libncurses-dev libffi-dev libssl-dev python-is-python3
 
     - name: Setup OVMS ESP-IDF (their fork)
       run: |
@@ -35,8 +35,10 @@ jobs:
       run: |
         source ~/esp-idf/export.sh
         cd vehicle/OVMS.V3
-        rm -f sdkconfig sdkconfig.old
-        yes "" | make defconfig || true
+        # Pre-seed HW31 sdkconfig so make never needs to run defconfig interactively.
+        # ESP-IDF v3.3 make defconfig is interactive and breaks in CI regardless of
+        # how you pipe to it. The sdkconfig.default.hw31 is a full generated config.
+        cp support/sdkconfig.default.hw31 sdkconfig
         make -j$(nproc)
         
     - name: Upload firmware artifacts
